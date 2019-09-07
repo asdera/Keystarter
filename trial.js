@@ -19,16 +19,7 @@ bot
       `Your bot is initialized. It is logged in as ${bot.myInfo().username}`
     );
 
-    // Reply to all messages between you and `kbot` with 'thanks!'
-    const channel = {
-      name: bot.myInfo().username,
-      public: true,
-      topicType: "chat"
-    };
-
     const onMessage = messageContent => {
-      console.log("got a message from the user");
-
       const { channel, content } = messageContent;
       const plainText = messageContent.content.text.body.toLowerCase();
       const incoming_username = messageContent.sender.username;
@@ -71,8 +62,8 @@ bot
             );
         });
     };
-
-    bot.chat.watchChannelForNewMessages(channel, onMessage);
+    console.log("watching")
+    bot.chat.watchAllChannelsForNewMessages(onMessage);
   })
   .catch(error => {
     console.error(error);
