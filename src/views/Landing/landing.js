@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -19,12 +20,16 @@ export default function Landing() {
       <h1>
         <b>I'm a</b>
       </h1>
-      <Button variant="contained" className={classes.button}>
-        Investor
-      </Button>
-      <Button variant="contained" className={classes.button}>
-        Project Creator
-      </Button>
+      <Link to="/donate">
+        <Button variant="contained" className={classes.button}>
+          Investor
+        </Button>
+      </Link>
+      <Link to="/create">
+        <Button variant="contained" className={classes.button}>
+          Project Creator
+        </Button>
+      </Link>
     </div>
   );
 }
