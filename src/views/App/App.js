@@ -5,15 +5,14 @@ import Header from "../Header/header";
 import Projects from "../Projects/projects";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-
 function App() {
   return (
     <Router>
       <div>
         <Header />
         <Route exact path="/" component={Landing} />
-        <Route path="/create" component={Create} />
-        <Route path="/donate" component={Projects} />
+        <Route exact path="/create" component={Create} />
+        <Route exact path="/donate" component={Projects} />
       </div>
     </Router>
   );
