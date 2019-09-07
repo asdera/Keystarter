@@ -62,7 +62,7 @@ bot
             );
         });
     };
-    console.log("watching");
+
     bot.chat.watchAllChannelsForNewMessages(onMessage);
   })
   .catch(error => {
@@ -84,15 +84,13 @@ function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
       timestamp: timestamp
     };
 
-    db.collection("subscription")
-      .remove(myobj)
-      .then((err, obj) => {
-        if (err) throw err;
-        console.log(obj.result.n + " record(s) deleted");
-        bot.chat.send(channel, {
-          body: "I will unsubscribe you from Netflix."
-        });
+    db.collection("subscription").remove(myobj, function(err, obj) {
+      if (err) throw err;
+      console.log(obj.result.n + " record(s) deleted");
+      bot.chat.send(channel, {
+        body: "I will unsubscribe you from Netflix."
       });
+    });
   }
 }
 
