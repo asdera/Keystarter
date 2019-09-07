@@ -4,9 +4,8 @@ var url =
 const Bot = require("keybase-bot");
 
 const bot = new Bot();
-const username = "rohilgupta";
-const paperkey =
-  "walk unfair carpet once steak penalty barrel buyer cheese entry lucky sting visual";
+const username = 'keystarter'
+const paperkey = 'title language transfer athlete boost iron version asthma camp knife movie blanket mixed'
 bot
   .init(username, paperkey, { verbose: false })
   .then(() => {
@@ -32,6 +31,11 @@ bot
         plainText.includes("subscribe") &&
         !plainText.includes("unsubscribe");
 
+      const unsubscribe =
+        content.type === "text" &&
+        plainText.includes("netflix") &&
+        plainText.includes("unsubscribe");
+
       addSubscription && console.log("user wants to add a subscription");
 
       addSubscription &&
@@ -43,7 +47,19 @@ bot
             .find()
             .toArray()
             .then(items =>
-              dbCallback(items, channel, timestamp, incoming_username, db)
+              insertdbCallback(items, channel, timestamp, incoming_username, db)
+            );
+        })
+        unsubscribe &&
+        MongoClient.connect(url, function(err, db) {
+          if (err) throw err;
+
+          //var myobj = { subscription: "Netflix", username: incoming_username };
+          db.collection("subscription")
+            .find()
+            .toArray()
+            .then(items =>
+              deletedbCallback(items, channel, timestamp, incoming_username, db)
             );
         });
     };
@@ -55,7 +71,31 @@ bot
     bot.deinit();
   });
 
-function dbCallback(retArr, channel, timestamp, incoming_username, db) {
+  function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
+    // Record doesn't exist
+    if ((retArr && retArr.length === 0) || !retArr) {
+      console.log("retArr is: ", retArr);
+      bot.chat.send(channel, {
+        body: "You've already unsubscribed from all subscriptions!"
+      });
+    } else {
+      myobj = {
+        subscription: "Netflix",
+        username: incoming_username,
+        timestamp: timestamp
+      };
+
+      db.collection("subscription").remove(myobj, function(err, obj) {
+        if (err) throw err;
+        console.log(obj.result.n + " record(s) deleted");
+        bot.chat.send(channel, {
+          body: "I will unsubscribe you to Netflix immediately."
+        });
+      });
+    }
+  }
+
+function insertdbCallback(retArr, channel, timestamp, incoming_username, db) {
   // Record doesn't exist
   if ((retArr && retArr.length === 0) || !retArr) {
     myobj = {
