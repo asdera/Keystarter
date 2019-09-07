@@ -62,7 +62,7 @@ bot
             );
         });
     };
-    console.log("watching")
+    console.log("watching");
     bot.chat.watchAllChannelsForNewMessages(onMessage);
   })
   .catch(error => {
@@ -79,18 +79,20 @@ function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
     });
   } else {
     myobj = {
-      subscription: "Netflix",
+      subscription: "netflix",
       username: incoming_username,
       timestamp: timestamp
     };
 
-    db.collection("subscription").remove(myobj, function(err, obj) {
-      if (err) throw err;
-      console.log(obj.result.n + " record(s) deleted");
-      bot.chat.send(channel, {
-        body: "I will unsubscribe you to Netflix immediately."
+    db.collection("subscription")
+      .remove(myobj)
+      .then((err, obj) => {
+        if (err) throw err;
+        console.log(obj.result.n + " record(s) deleted");
+        bot.chat.send(channel, {
+          body: "I will unsubscribe you from Netflix."
+        });
       });
-    });
   }
 }
 
@@ -98,7 +100,7 @@ function insertdbCallback(retArr, channel, timestamp, incoming_username, db) {
   // Record doesn't exist
   if ((retArr && retArr.length === 0) || !retArr) {
     myobj = {
-      subscription: "Netflix",
+      subscription: "netflix",
       username: incoming_username,
       timestamp: timestamp
     };
