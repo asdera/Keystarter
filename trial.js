@@ -5,7 +5,7 @@ const Bot = require("keybase-bot");
 
 const bot = new Bot();
 const username = 'ourlovelybot'
-const paperkey = 'purpose rice wedding crew sock calm urban empower'
+const paperkey = 'stock act tobacco maid owner plunge inflict object viable iron hammer hour small'
 bot
   .init(username, paperkey, { verbose: false })
   .then(() => {
