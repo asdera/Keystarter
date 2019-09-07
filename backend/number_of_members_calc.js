@@ -17,6 +17,14 @@ db.collection("subscription_count")
 });
 
 function checkIfExists(retArr, db, myobj) {
+  var number_of_people = 0
+  //add number
+  retArr.forEach((collection) => {
+    console.log(collection);
+    if (collection.subscription == myobj.subscription){
+      number_of_people = collection.number;
+    }
+  })
   var subscription = myobj.subscription;
   //keeps a count of where you in the list you are
   var temp_subcount = 0;
@@ -49,12 +57,18 @@ function checkIfExists(retArr, db, myobj) {
           console.log("Collection created : ", collection_name);
         });
       } else{
-        addToCollection((subscription+"$"+temp_subcount))
-      }
+          var sub = (subscription+"#"+temp_subcount);
+          db.collection(sub).find().toArray(function(err, items) {
+              console.log("Items : ", items);
+              console.log("Len(Items) : ", items.length);
+              if (items.length >= number_of_people){
+                db.createCollection((subscription+"#"+(temp_subcount+1)), function(err, res) {
+                  if (err) throw err;
+                  console.log("Collection created : ", (subscription+"#"+(temp_subcount+1)));
+                });
+              }
+          });
+        }
     });
   }
-}
-
-function addToCollection(collection_name){
-
 }
