@@ -4,8 +4,8 @@ var url =
 const Bot = require("keybase-bot");
 
 const bot = new Bot();
-const username = 'keystarter'
-const paperkey = 'title language transfer athlete boost iron version asthma camp knife movie blanket mixed'
+const username = 'ourlovelybot'
+const paperkey = 'purpose rice wedding crew sock calm urban empower'
 bot
   .init(username, paperkey, { verbose: false })
   .then(() => {
