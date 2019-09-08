@@ -16,8 +16,7 @@ const companies = [
   "amazon prime",
   "deezer",
   "grammarly",
-  "brilliant",
-  "brr"
+  "brilliant"
 ];
 const costs = [
   "+4usd",
@@ -31,8 +30,7 @@ const costs = [
   "+2.5usd",
   "+2.5usd",
   "+7.5usd",
-  "+2.5usd",
-  "+3usd"
+  "+2.5usd"
 ];
 
 const username = "ourlovelybot";
@@ -78,6 +76,22 @@ bot
         content.type === "text" &&
         plainText.includes(company) &&
         plainText.includes("unsubscribe");
+      
+      const payment =
+        content.type === "text" &&
+        plainText.includes("+");
+      
+      const hello =
+        content.type === "text" &&
+        (plainText.includes("hi") || plainText.includes("hello") || plainText.includes("yo"))
+      
+      const help =
+        content.type === "text" &&
+        (plainText.includes("yes") || plainText.includes("sure") || plainText.includes("help"))
+      
+      const botbalance =
+        content.type === "text" &&
+        plainText.includes("botbalance")
 
       addSubscription &&
         MongoClient.connect(url, function(err, db) {
@@ -112,6 +126,24 @@ bot
         });
 
       console.log("completed onMessage (promises left to deal with tho)");
+
+      if (payment) {
+        bot.chat.send(channel, {
+          body: "Thank you for your payment. Your request will be processed shortly!"
+        });
+      } else if (hello) {
+        bot.chat.send(channel, {
+          body: "Hello good sir! Are you on the lookout for cheap subscriptions?"
+        });
+      } else if (help) {
+        bot.chat.send(channel, {
+          body: "Just ask me to subscribe to any service!"
+        });
+      } else if (botbalance) {
+        bot.chat.send(channel, {
+          body: "Botbalance"
+        });
+      }
     };
 
     bot.chat.watchAllChannelsForNewMessages(onMessage);
