@@ -41,10 +41,8 @@ bot
       const timestamp = messageContent.sentAt;
       var company;
 
-      console.log(plainText);
-
       for (var i = 0; i < companies.length; i++) {
-        if (plaintext.includes(companies[i])) {
+        if (plainText.includes(companies[i])) {
           company = companies[i];
           console.log("found company", company);
           break;
@@ -107,7 +105,7 @@ bot
 function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
   // Record doesn't exist
   if ((retArr && retArr.length === 0) || !retArr) {
-    console.log("retArr is: ", retArr);
+    //console.log("retArr is: ", retArr);
     bot.chat.send(channel, {
       body: "You've already unsubscribed from all subscriptions!"
     });
@@ -155,7 +153,7 @@ function checkIfExists(retArr, db, myobj) {
   var number_of_people = 0;
   //add number
   retArr.forEach(collection => {
-    console.log(collection);
+    //console.log(collection);
     if (collection.subscription == myobj.subscription) {
       number_of_people = collection.number;
     }
@@ -169,12 +167,12 @@ function checkIfExists(retArr, db, myobj) {
   } else {
     db.listCollections().toArray(function(err, collInfos) {
       // collInfos is an array of collection info objects that look like:
-      console.log(collInfos);
+      //console.log(collInfos);
 
       collInfos.forEach(collection => {
-        console.log(collection);
+        //console.log(collection);
         var name = collection.name;
-        console.log(name);
+        //console.log(name);
         if (name.includes(subscription) && name.includes("#")) {
           var temp = parseInt(name.split("#")[1]);
           if (temp_subcount <= temp) {
@@ -195,8 +193,8 @@ function checkIfExists(retArr, db, myobj) {
         db.collection(sub)
           .find()
           .toArray(function(err, items) {
-            console.log("Items : ", items);
-            console.log("Len(Items) : ", items.length);
+            //console.log("Items : ", items);
+            //console.log("Len(Items) : ", items.length);
             if (items.length >= number_of_people) {
               db.createCollection(
                 subscription + "#" + (temp_subcount + 1),
