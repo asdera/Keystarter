@@ -6,7 +6,7 @@ var url =
 MongoClient.connect(url, function(err, db) {
 // Check if 1. subscription exists in collection subscription_count
 if (err) throw err;
-var myobj = { subscription: "netflix"};
+var myobj = { subscription: "amazon-prime"};
 db.collection("subscription_count")
   .find()
   .toArray()
