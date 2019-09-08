@@ -78,7 +78,14 @@ bot
             .find()
             .toArray()
             .then(items =>
-              insertdbCallback(items, channel, timestamp, incoming_username, db)
+              insertdbCallback(
+                items,
+                channel,
+                timestamp,
+                incoming_username,
+                db,
+                company
+              )
             );
         });
 
@@ -126,7 +133,14 @@ function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
   }
 }
 
-function insertdbCallback(retArr, channel, timestamp, incoming_username, db) {
+function insertdbCallback(
+  retArr,
+  channel,
+  timestamp,
+  incoming_username,
+  db,
+  company
+) {
   // Record doesn't exist
   if ((retArr && retArr.length === 0) || !retArr) {
     myobj = {
