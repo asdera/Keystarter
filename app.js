@@ -16,7 +16,8 @@ const companies = [
   "amazon prime",
   "deezer",
   "grammarly",
-  "brilliant"
+  "brilliant",
+  "brr"
 ];
 const costs = [
   "+4usd",
@@ -30,7 +31,8 @@ const costs = [
   "+2.5usd",
   "+2.5usd",
   "+7.5usd",
-  "+2.5usd"
+  "+2.5usd",
+  "+3usd"
 ];
 
 const username = "ourlovelybot";
@@ -201,7 +203,7 @@ function insertdbCallback(
       if (err) throw err;
       console.log("1 record inserted");
       bot.chat.send(channel, {
-        body: "Sure, I'll subscribe you to " + company + ". " + "Please pay '" + cost + "'"
+        body: "Sure, I'll subscribe you to " + company + ".\nPlease pay -" + cost + "-."
       });
     });
   } else {
