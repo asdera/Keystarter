@@ -16,7 +16,8 @@ const companies = [
   "amazon prime",
   "deezer",
   "grammarly",
-  "brilliant"
+  "brilliant",
+  "masterclass"
 ];
 const costs = [
   "+4usd",
@@ -30,7 +31,8 @@ const costs = [
   "+2.5usd",
   "+2.5usd",
   "+7.5usd",
-  "+2.5usd"
+  "+2.5usd",
+  "+8usd"
 ];
 
 const username = "ourlovelybot";
@@ -121,7 +123,7 @@ bot
             .find()
             .toArray()
             .then(items =>
-              deletedbCallback(items, channel, timestamp, incoming_username, db)
+              deletedbCallback(items, channel, timestamp, incoming_username, db, company)
             );
         });
 
@@ -180,7 +182,7 @@ function subscription_count(url, company) {
   });
 }
 
-function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
+function deletedbCallback(retArr, channel, timestamp, incoming_username, db, company) {
   var allCompanies = [];
   retArr.forEach(obj => {
     allCompanies.push(obj["subscription"]);
@@ -194,8 +196,7 @@ function deletedbCallback(retArr, channel, timestamp, incoming_username, db) {
   } else {
     myobj = {
       subscription: company,
-      username: incoming_username,
-      timestamp: timestamp
+      username: incoming_username
     };
 
     db.collection("subscription").remove(myobj, function(err, obj) {
