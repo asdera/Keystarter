@@ -18,6 +18,20 @@ const companies = [
   "grammarly",
   "brilliant"
 ];
+const costs = [
+  "+4usd",
+  "+3usd",
+  "+2.5usd",
+  "+3.25usd",
+  "+3.75usd",
+  "+2.5usd",
+  "+2.5usd",
+  "+3.75usd",
+  "+2.5usd",
+  "+2.5usd",
+  "+7.5usd",
+  "+2.5usd"
+];
 
 const username = "ourlovelybot";
 const paperkey =
@@ -44,6 +58,7 @@ bot
       for (var i = 0; i < companies.length; i++) {
         if (plainText.includes(companies[i])) {
           company = companies[i];
+          cost = costs[i];
           break;
         }
       }
@@ -186,7 +201,7 @@ function insertdbCallback(
       if (err) throw err;
       console.log("1 record inserted");
       bot.chat.send(channel, {
-        body: "Sure, I'll subscribe you to " + company + "."
+        body: "Sure, I'll subscribe you to " + company + ". " + "Please pay '" + cost + "'"
       });
     });
   } else {
