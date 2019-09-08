@@ -44,12 +44,12 @@ const paperkey =
         for (var i = 0; i < companies.length; i++) {
           if (plainText.includes(companies[i])) {
             company = companies[i];
-            console.log("found company", company);
             break;
           }
         }
 
         await subscription_count(url, company);
+        console.log("subscription_count stuff went great!");
 
         const addSubscription =
           content.type === "text" &&
@@ -63,29 +63,32 @@ const paperkey =
           plainText.includes("unsubscribe");
 
         addSubscription &&
+          console.log("SUBSCRIBE STUFFFFFF") &&
           (await MongoClient.connect(url, async function(err, db) {
-            if (err) throw err;
+            //if (err) throw err;
+            console.log("about to push to subscribe");
 
             await db
               .collection("subscription")
               .find()
               .toArray()
-              .then(async items => {
-                console.log("GOT HEREREEE", items);
-                await insertdbCallback(
-                  items,
-                  channel,
-                  timestamp,
-                  incoming_username,
-                  db,
-                  company
-                );
-              });
+              .then(
+                async items =>
+                  await insertdbCallback(
+                    items,
+                    channel,
+                    timestamp,
+                    incoming_username,
+                    db,
+                    company
+                  )
+              );
           }));
 
         unsubscribe &&
+          console.log("UNSUBSCRIBE STUFFFFFF") &&
           (await MongoClient.connect(url, async function(err, db) {
-            if (err) throw err;
+            //if (err) throw err;
 
             await db
               .collection("subscription")
@@ -102,32 +105,37 @@ const paperkey =
                   )
               );
           }));
+
+        console.log("completed onMessage");
       };
 
-      await bot.chat.watchAllChannelsForNewMessages(onMessage);
+      bot.chat.watchAllChannelsForNewMessages(onMessage);
     })
     .catch(error => {
-      console.error(error);
+      //console.error(error);
       bot.deinit();
     });
 
   async function subscription_count(url, company) {
     await MongoClient.connect(url, async (err, db) => {
       // Check if 1. subscription exists in collection subscription_count
-      if (err) throw err;
+      //if (err) throw err;
       var myobj = { subscription: company };
       await db
         .collection("subscription_count")
         .find()
         .toArray()
         .then(async items => {
-          return await checkIfExists(items, db, myobj);
+          return await checkIfExists(company, items, db, myobj);
         })
         .then(async collection_name => {
-          await db.collection(collection_name).insertOne(myobj, function(err) {
-            if (err) throw err;
-            console.log("1 record inserted in", collection_name);
-          });
+          collection_name &&
+            (await db
+              .collection(collection_name)
+              .insertOne(myobj, function(err) {
+                //if (err) throw err;
+                console.log("1 record inserted in", collection_name);
+              }));
         });
     });
   }
@@ -139,9 +147,13 @@ const paperkey =
     incoming_username,
     db
   ) {
+    var allCompanies = [];
+    retArr.forEach(obj => {
+      allCompanies.push(obj["subscription"]);
+    });
+
     // Record doesn't exist
-    if ((retArr && retArr.length === 0) || !retArr) {
-      //console.log("retArr is: ", retArr);
+    if (!allCompanies.includes(company)) {
       bot.chat.send(channel, {
         body: "You've already unsubscribed from all subscriptions!"
       });
@@ -153,7 +165,7 @@ const paperkey =
       };
 
       await db.collection("subscription").remove(myobj, function(err, obj) {
-        if (err) throw err;
+        //if (err) throw err;
         console.log(obj.result.n + " record(s) deleted");
         bot.chat.send(channel, {
           body: "I will unsubscribe you from " + company + "."
@@ -170,10 +182,14 @@ const paperkey =
     db,
     company
   ) {
-    console.log("in insertdbCallback");
+    var allCompanies = [];
+    retArr.forEach(obj => {
+      allCompanies.push(obj["subscription"]);
+    });
+
     // Record doesn't exist
-    if ((retArr && retArr.length === 0) || !retArr) {
-      console.log("record doesn't exist!?!?!?!?!!?");
+    if (!allCompanies.includes(company)) {
+      console.log("record of", company, "doesn't exist in subscriptions");
 
       myobj = {
         subscription: company,
@@ -181,26 +197,25 @@ const paperkey =
         timestamp: timestamp
       };
 
-      await db.collection("subscription").insertOne(myobj, function(err, res) {
-        if (err) throw err;
+      await db.collection("subscription").insertOne(myobj, function(err) {
+        //if (err) throw err;
         console.log("1 record inserted");
         bot.chat.send(channel, {
           body: "Sure, I'll subscribe you to " + company + "."
         });
       });
     } else {
-      console.log("");
-      await bot.chat.send(channel, {
+      console.log("record of", company, "exists in subscriptions");
+      bot.chat.send(channel, {
         body: "You're already subscribed!"
       });
     }
   }
 
-  async function checkIfExists(retArr, db, myobj) {
+  async function checkIfExists(company, retArr, db, myobj) {
     var number_of_people = 0;
     //add number
     retArr.forEach(collection => {
-      //console.log(collection);
       if (collection.subscription == myobj.subscription) {
         number_of_people = collection.number;
       }
@@ -208,8 +223,14 @@ const paperkey =
     var subscription = myobj.subscription;
     //keeps a count of where you in the list you are
     var temp_subcount = 0;
-    //subscription doesn't exist
-    if ((retArr && retArr.length === 0) || !retArr) {
+
+    var allCompanies = [];
+    retArr.forEach(obj => {
+      allCompanies.push(obj["subscription"]);
+    });
+
+    //subscription doesn't exist if its not in retArr (subscription_count)
+    if (!allCompanies.includes(company)) {
       console.log("Subscription doesn't exist");
     } else {
       console.log("Subscription does exist");
@@ -218,7 +239,6 @@ const paperkey =
         .toArray()
         .then(async collInfos => {
           // collInfos is an array of collection info objects that look like:
-          console.log(collInfos);
 
           collInfos.forEach(collection => {
             //console.log(collection);
@@ -237,11 +257,8 @@ const paperkey =
             console.log("temp_subcount is 0");
             var collection_name = subscription + "#1";
             await db.createCollection(collection_name, function(err) {
-              if (err) throw err;
-              console.log("Collection created:", collection_name);
+              //if (err) throw err;
             });
-
-            console.log("collection_name", collection_name);
 
             return collection_name;
           } else {
@@ -250,13 +267,11 @@ const paperkey =
               .collection(sub)
               .find()
               .toArray(async function(items) {
-                //console.log("Items : ", items);
-                //console.log("Len(Items) : ", items.length);
-                if (items.length >= number_of_people) {
+                if (items && items.length >= number_of_people) {
                   await db.createCollection(
                     subscription + "#" + (temp_subcount + 1),
                     function(err, res) {
-                      if (err) throw err;
+                      //if (err) throw err;
                       console.log(
                         "Collection created : ",
                         subscription + "#" + (temp_subcount + 1)
@@ -268,7 +283,6 @@ const paperkey =
           }
         })
         .then(retVal => {
-          console.log("last one", retVal);
           return retVal;
         });
     }
